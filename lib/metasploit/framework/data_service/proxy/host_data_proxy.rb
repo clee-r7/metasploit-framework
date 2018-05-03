@@ -9,15 +9,25 @@ module HostDataProxy
       opts[:address] = addresses
       opts[:search_term] = search_term
       data_service.hosts(opts)
-    rescue Exception => e
+    rescue => e
       self.log_error(e, "Problem retrieving hosts")
     end
   end
 
-  # TODO: Shouldn't this proxy to RemoteHostDataService#find_or_create_host ?
-  # It's currently skipping the "find" part
   def find_or_create_host(opts)
+    host = get_host(opts)
+    return host unless host.nil?
+
     report_host(opts)
+  end
+
+  def get_host(opts)
+    begin
+      data_service = self.get_data_service()
+      data_service.get_host(opts)
+    rescue e
+      self.log_error(e, "Problem retrieving host")
+    end
   end
 
   def report_host(opts)
@@ -27,7 +37,7 @@ module HostDataProxy
       data_service = self.get_data_service
       add_opts_workspace(opts)
       data_service.report_host(opts)
-    rescue Exception => e
+    rescue => e
       self.log_error(e, "Problem reporting host")
     end
   end
@@ -37,7 +47,7 @@ module HostDataProxy
       data_service = self.get_data_service
       add_opts_workspace(hosts)
       data_service.report_hosts(hosts)
-    rescue Exception => e
+    rescue => e
       self.log_error(e, "Problem reporting hosts")
     end
   end
@@ -46,7 +56,7 @@ module HostDataProxy
     begin
       data_service = self.get_data_service
       data_service.update_host(opts)
-    rescue Exception => e
+    rescue => e
       self.log_error(e, "Problem updating host")
     end
   end
@@ -55,7 +65,7 @@ module HostDataProxy
     begin
       data_service = self.get_data_service
       data_service.delete_host(opts)
-    rescue Exception => e
+    rescue => e
       self.log_error(e, "Problem deleting host")
     end
   end
