@@ -33,13 +33,14 @@ module Metasploit
       report(:wrong_password, opts.merge(username: username, password: password))
     end
 
-    def run(metadata, callback, soft_check: nil)
+    def run(metadata, callback, soft_check: nil, hard_check: nil)
       self.logging_prefix = ''
       cb = nil
       req = JSON.parse($stdin.readpartial(10000), symbolize_names: true)
       if req[:method] == 'describe'
         capabilities = []
         capabilities << 'soft_check' if soft_check
+        capabilities << 'hard_check' if hard_check
 
         meta = metadata.merge(capabilities: capabilities)
         rpc_send({
@@ -51,6 +52,14 @@ module Metasploit
         else
           rpc_send({
             jsonrpc: '2.0', id: req[:id], error: {code: -32601, message: 'Soft checks are not supported'}
+          })
+        end
+      elsif req[:method] == 'hard_check'
+        if hard_check
+          cb = hard_check
+        else
+          rpc_send({
+            jsonrpc: '2.0', id: req[:id], error: {code: -32601, message: 'Hard checks are not supported'}
           })
         end
       elsif req[:method] == 'run'

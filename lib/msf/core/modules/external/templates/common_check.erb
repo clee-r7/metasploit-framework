@@ -1,4 +1,9 @@
-<% if meta[:capabilities].include? 'soft_check' %>
+<% if meta[:capabilities].include? 'hard_check' %>
+def check
+  code = execute_module(<%= meta[:path] %>, method: :hard_check, fail_on_exit: false) || 'unknown'
+  return Msf::Exploit::CheckCode::Codes[code]
+end
+<% elsif meta[:capabilities].include? 'soft_check' %>
 def check
   code = execute_module(<%= meta[:path] %>, method: :soft_check, fail_on_exit: false) || 'unknown'
   return Msf::Exploit::CheckCode::Codes[code]
