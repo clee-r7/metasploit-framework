@@ -12,6 +12,7 @@ require 'erb'
 require 'rexml/document'
 require 'fileutils'
 require 'digest/md5'
+require 'metasploit/framework/service/http/msf_as_a_service'
 
 module Msf
 module Ui
@@ -178,12 +179,21 @@ class Driver < Msf::Ui::Driver
       }
     end
 
+    if opts['MsfWebService']
+      init_ws(this.framework)
+    end
+
     # Process any additional startup commands
     if opts['XCommands'] and opts['XCommands'].kind_of? Array
       opts['XCommands'].each { |c|
         run_single(c)
       }
     end
+  end
+
+  def init_ws(framework)
+    maas = MsfAsAService.new(framework)
+    maas.start
   end
 
   #

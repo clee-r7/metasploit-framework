@@ -2,8 +2,15 @@ require 'metasploit/framework/service/http/msf_app'
 
 class MsfAsAService
 
-  def initialize(opts)
-    @opts = opts
+
+  DEFAULT_OPTS = {
+      :interface => '0.0.0.0',
+      :port => 8080
+  }
+
+  def initialize(framework, opts = {})
+    @framework = framework
+    @opts = parse_opts(opts)
     @server_handle = nil
   end
 
@@ -19,6 +26,10 @@ class MsfAsAService
   private
   #######
 
+  def parse_opts(opts)
+    return DEFAULT_OPTS if opts.empty?
+  end
+
   def start_http_server
 
     Rack::Handler::Thin.run(MsfApp, @opts) do |server|
@@ -26,7 +37,7 @@ class MsfAsAService
       # Prevent accidental shutdown from msfconsole eg: ctrl-c
       [:INT, :TERM].each { |sig|
         trap(sig) {
-          server.stop if sig == :TERM)
+          server.stop if (sig == :TERM)
         }
       }
 

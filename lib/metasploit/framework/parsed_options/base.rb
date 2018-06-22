@@ -94,6 +94,8 @@ class Metasploit::Framework::ParsedOptions::Base
       options.modules.defer_loads = false
       options.modules.path = nil
 
+      options.framework.ws = false
+
       @options = options
     end
 
@@ -156,6 +158,13 @@ class Metasploit::Framework::ParsedOptions::Base
           'Show version'
       ) do
         options.subcommand = :version
+      end
+
+      option_parser.on(
+          '--ws',
+          'Run metasploit as a web service'
+      ) do
+        options.framework.ws = true
       end
 
       option_parser.separator ''

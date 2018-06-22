@@ -89,6 +89,7 @@ class Metasploit::Framework::Command::Console < Metasploit::Framework::Command::
       driver_options['RealReadline'] = options.console.real_readline
       driver_options['Resource'] = options.console.resources
       driver_options['XCommands'] = options.console.commands
+      driver_options['MsfWebService'] = options.framework.ws
 
       @driver_options = driver_options
     end

@@ -15,11 +15,10 @@ module MSFModuleServlet
   def self.do_action
     lambda {
       begin
-        opts = parse_json_request(request, false)
+        module_action = parse_json_request(request, false)
         sanitized_params = sanitize_params(params)
-        data = get_db.hosts(sanitized_params)
-        includes = [:loots]
-        set_json_response(data, includes)
+        data = ModuleHelper.do_module_action(module_action)
+        set_json_response(data)
       rescue => e
         set_error_on_response(e)
       end
