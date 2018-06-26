@@ -15,10 +15,14 @@ class MsfAsAService
   end
 
   def start
-    start_http_server
+    Thread.new {start_http_server}
   end
 
   def stop
+    @server_handle.stop if !@server_handle.nil?
+  end
+
+  def on_ui_stop
     @server_handle.stop if !@server_handle.nil?
   end
 
@@ -42,14 +46,18 @@ class MsfAsAService
       }
 
       if @opts[:ssl] && @opts[:ssl] = true
-        print_good "SSL Enabled"
+        #print_good "SSL Enabled"
         server.ssl = true
         server.ssl_options = opts[:ssl_opts]
       else
-        print_warning 'SSL Disabled'
+        #print_warning 'SSL Disabled'
       end
       server.threaded = true
       @server_handle = server
     end
+  end
+
+  def register_stop_listener
+    @framework.events.add_ui_subscriber(self)
   end
 end

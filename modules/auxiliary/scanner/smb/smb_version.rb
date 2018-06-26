@@ -40,7 +40,7 @@ class MetasploitModule < Msf::Auxiliary
 
   # Fingerprint a single host
   #
-  def run_host(ip)
+    ip)
     smb_ports = [445, 139]
     smb_ports.each do |pnum|
       @smb_port = pnum

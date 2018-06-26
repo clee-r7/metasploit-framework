@@ -180,7 +180,7 @@ class Driver < Msf::Ui::Driver
     end
 
     if opts['MsfWebService']
-      init_ws(this.framework)
+      init_ws(self.framework)
     end
 
     # Process any additional startup commands

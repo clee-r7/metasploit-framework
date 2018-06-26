@@ -1,6 +1,6 @@
 require 'sinatra/base'
-require 'helper/module_helper'
-require 'servlet/msf_module_servlet'
+require 'metasploit/framework/service/http/helper/module_helper'
+require 'metasploit/framework/service/http/servlet/msf_module_servlet'
 
 class MsfApp < Sinatra::Base
   helpers ModuleHelper
