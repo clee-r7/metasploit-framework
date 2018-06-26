@@ -1,7 +1,11 @@
+require 'rack'
+require 'thin/logging'
 require 'metasploit/framework/service/http/msf_app'
+
 
 class MsfAsAService
 
+  attr_reader :framework
 
   DEFAULT_OPTS = {
       :interface => '0.0.0.0',
@@ -36,7 +40,8 @@ class MsfAsAService
 
   def start_http_server
 
-    Rack::Handler::Thin.run(MsfApp, @opts) do |server|
+    Thin::Logging.silent = true
+    Rack::Handler::Thin.run(MsfApp.new(nil, @framework), @opts) do |server|
 
       # Prevent accidental shutdown from msfconsole eg: ctrl-c
       [:INT, :TERM].each { |sig|
@@ -54,7 +59,9 @@ class MsfAsAService
       end
       server.threaded = true
       @server_handle = server
+      register_stop_listener
     end
+
   end
 
   def register_stop_listener
